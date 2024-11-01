@@ -52,7 +52,12 @@ def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=1):
     model = ResNetMultiImageInput(block_type, blocks, num_input_images=num_input_images)
 
     if pretrained:
-        loaded = model_zoo.load_url(models.resnet.model_urls['resnet{}'.format(num_layers)])
+        if num_layers == 18:
+            pretrained_model = models.resnet18(pretrained=True)
+        elif num_layers == 50:
+            pretrained_model = models.resnet50(pretrained=True)
+
+        loaded = pretrained_model.state_dict()
         loaded['conv1.weight'] = torch.cat(
             [loaded['conv1.weight']] * num_input_images, 1) / num_input_images
         model.load_state_dict(loaded)
