@@ -18,7 +18,7 @@ class ResNetMultiImageInput(models.ResNet):
     """Constructs a resnet model with varying number of input images.
     Adapted from https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
     """
-    def __init__(self, block, layers, num_classes=1000, num_input_images=2):
+    def __init__(self, block, layers, num_classes=1000, num_input_images=1):
         super(ResNetMultiImageInput, self).__init__(block, layers)
         self.inplanes = 64
         self.conv1 = nn.Conv2d(
@@ -39,7 +39,7 @@ class ResNetMultiImageInput(models.ResNet):
                 nn.init.constant_(m.bias, 0)
 
 
-def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=2):
+def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=1):
     """Constructs a ResNet model.
     Args:
         num_layers (int): Number of resnet layers. Must be 18 or 50
@@ -62,7 +62,7 @@ def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=2):
 class ResnetEncoder(nn.Module):
     """Pytorch module for a resnet encoder
     """
-    def __init__(self, num_layers, pretrained, num_input_images=2):
+    def __init__(self, num_layers, pretrained, num_input_images=1):
         super(ResnetEncoder, self).__init__()
 
         self.num_ch_enc = np.array([64, 64, 128, 256, 512])
