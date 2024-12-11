@@ -113,7 +113,7 @@ def test_simple(args):
 
     print("-> Predicting on {:d} test images".format(len(paths)))
 
-    # PREDICTING ON EACH IMAGE IN TURN
+    # PREDICTING ON EACH IMAGE IN TURN ; THIS HAS BEEN MODDED TO GET 2 IMAGE PAIRS SIMULTANEUOSLY
     with torch.no_grad():
         for idx, image_path in enumerate(paths):
 
@@ -121,12 +121,27 @@ def test_simple(args):
                 # don't try to predict disparity for a disparity image!
                 continue
 
-            # Load image and preprocess
-            input_image = pil.open(image_path).convert('RGB')
-            original_width, original_height = input_image.size
-            input_image = input_image.resize((feed_width, feed_height), pil.LANCZOS)
-            input_image = transforms.ToTensor()(input_image).unsqueeze(0)
+            if idx+1 == len(paths):
+                #stop predicting with last image; last image cannot be paired
+                break
 
+            # Load image and preprocess (Image 1)
+            input_image1 = pil.open(image_path).convert('RGB')
+            original_width, original_height = input_image1.size
+            input_image1 = input_image1.resize((feed_width, feed_height), pil.LANCZOS)
+            input_image1 = transforms.ToTensor()(input_image1).unsqueeze(0)
+
+            #image2
+            pathImage2 = paths[idx+1]
+            input_image2 = pil.open(pathImage2).convert('RGB')
+            original_width, original_height = input_image2.size
+            input_image2 = input_image2.resize((feed_width, feed_height), pil.LANCZOS)
+            input_image2 = transforms.ToTensor()(input_image2).unsqueeze(0)
+
+            #combined tensor of 2 images
+            input_image = torch.cat((input_image1, input_image2), dim=1)  # Shape: [1, 6, H, W] - 6 channels
+                
+                
             # PREDICTION
             input_image = input_image.to(device)
             features = encoder(input_image)
