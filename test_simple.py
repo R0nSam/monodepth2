@@ -78,7 +78,7 @@ def test_simple(args):
 
     # LOADING PRETRAINED MODEL
     print("   Loading pretrained encoder")
-    encoder = networks.ResnetEncoder(18, False)
+    encoder = networks.ResnetEncoder(18, False, num_input_images = 2) # changed here no. input images
     loaded_dict_enc = torch.load(encoder_path, map_location=device)
 
     # extract the height and width of image that this model was trained with
@@ -126,13 +126,14 @@ def test_simple(args):
                 break
 
             # Load image and preprocess (Image 1)
-            input_image1 = pil.open(image_path).convert('RGB')
+            imagePath1 = paths[idx+1]
+            input_image1 = pil.open(imagePath1).convert('RGB')
             original_width, original_height = input_image1.size
             input_image1 = input_image1.resize((feed_width, feed_height), pil.LANCZOS)
             input_image1 = transforms.ToTensor()(input_image1).unsqueeze(0)
 
             #image2
-            pathImage2 = paths[idx+1]
+            pathImage2 = paths[idx]
             input_image2 = pil.open(pathImage2).convert('RGB')
             original_width, original_height = input_image2.size
             input_image2 = input_image2.resize((feed_width, feed_height), pil.LANCZOS)
@@ -140,6 +141,8 @@ def test_simple(args):
 
             #combined tensor of 2 images
             input_image = torch.cat((input_image1, input_image2), dim=1)  # Shape: [1, 6, H, W] - 6 channels
+
+            
                 
                 
             # PREDICTION
