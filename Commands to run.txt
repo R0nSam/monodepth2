@@ -1,0 +1,29 @@
+>>>python test_simple.py --image_path assets --model_name mono_640x192 --no_cuda --ext png
+
+>>>python train.py --no_cuda --model_name mono_model --png --num_epochs 2 --pose_model_type posecnn --weights_init scratch --log_dir ??
+
+>>>python train.py --no_cuda --model_name mono_model --png --num_epochs 1 --log_dir .
+
+
+Saving weights more often in trianing:
+import time
+
+def train(self):
+    """Run the entire training pipeline"""
+    self.epoch = 0
+    self.step = 0
+    self.start_time = time.time()  # Track start time
+    
+    save_interval = 10 * 60  # 10 minutes in seconds
+    
+    while self.epoch < self.opt.num_epochs:
+        self.run_epoch()
+        self.epoch += 1
+        
+        # Check if 10 minutes have passed since the last model save
+        elapsed_time = time.time() - self.start_time
+        
+        if elapsed_time >= save_interval:
+            self.save_model()
+            self.start_time = time.time()  # Reset the start time after saving
+
