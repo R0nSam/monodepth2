@@ -54,7 +54,7 @@ class MonoDataset(data.Dataset):
         self.height = height
         self.width = width
         self.num_scales = num_scales
-        self.interp = Image.Resampling.LANCZOS  # RON CHANGED HERE
+        self.interp = Image.LANCZOS  # RON CHANGED HERE
 
         self.frame_idxs = frame_idxs
 
@@ -172,7 +172,9 @@ class MonoDataset(data.Dataset):
             inputs[("K", scale)] = torch.from_numpy(K)
             inputs[("inv_K", scale)] = torch.from_numpy(inv_K)
 
-        if do_color_aug:
+        
+        # RON chaNGED here
+        if False: #do_color_aug:
             color_aug = transforms.ColorJitter.get_params(
                 self.brightness, self.contrast, self.saturation, self.hue)
         else:
