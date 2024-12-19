@@ -2,7 +2,7 @@
 
 >>>python train.py --no_cuda --model_name mono_model --png --num_epochs 2 --pose_model_type posecnn --weights_init scratch --log_dir ??
 
->>>python train.py --no_cuda --model_name mono_model --png --num_epochs 1 --log_dir .
+>>>python train.py --no_cuda --model_name mono_model --png --log_dir . --num_epochs 1
 
 
 Saving weights more often in trianing:
