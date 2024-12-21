@@ -13,11 +13,27 @@ import torch.nn as nn
 import torchvision.models as models
 import torch.utils.model_zoo as model_zoo
 
+#these 2 lines added 
+from torchvision.models.resnet import BasicBlock, Bottleneck, ResNet 
+from torch.hub import load_state_dict_from_url
+
 
 class ResNetMultiImageInput(models.ResNet):
     """Constructs a resnet model with varying number of input images.
     Adapted from https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
     """
+    model_urls = {
+      18: 'https://download.pytorch.org/models/resnet18-5c106cde.pth',
+      34: 'https://download.pytorch.org/models/resnet34-333f7ec4.pth',
+      50: 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
+      101: 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
+      152: 'https://download.pytorch.org/models/resnet152-b121ed2d.pth',
+      'resnext50_32x4d': 'https://download.pytorch.org/models/resnext50_32x4d-7cdf4587.pth',
+      'resnext101_32x8d': 'https://download.pytorch.org/models/resnext101_32x8d-8ba56ff5.pth',
+      'wide_resnet50_2': 'https://download.pytorch.org/models/wide_resnet50_2-95faca4d.pth',
+      'wide_resnet101_2': 'https://download.pytorch.org/models/wide_resnet101_2-32ee1156.pth',
+    }
+
     def __init__(self, block, layers, num_classes=1000, num_input_images=1):
         super(ResNetMultiImageInput, self).__init__(block, layers)
         self.inplanes = 64
@@ -52,7 +68,10 @@ def resnet_multiimage_input(num_layers, pretrained=False, num_input_images=1):
     model = ResNetMultiImageInput(block_type, blocks, num_input_images=num_input_images)
 
     if pretrained:
-        loaded = model_zoo.load_url(models.resnet.model_urls['resnet{}'.format(num_layers)])
+        url = ResNetMultiImageInput.model_urls[num_layers]
+        # Load pre-trained weights
+        loaded = load_state_dict_from_url(url, progress=True)
+        # Adjust the first convolutional layer for multi-image input
         loaded['conv1.weight'] = torch.cat(
             [loaded['conv1.weight']] * num_input_images, 1) / num_input_images
         model.load_state_dict(loaded)
